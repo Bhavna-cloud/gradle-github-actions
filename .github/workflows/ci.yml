@@ -25,16 +25,23 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: List build/libs contents
+      # ✅ Debug: Check if JAR file is generated
+      - name: Debug - List contents of build/libs
         run: ls -lah build/libs
 
-      - name: Check JAR File Exists
-        run: |
-          ls build/libs/*SNAPSHOT*.jar || (echo "JAR file not found!" && exit 1)
+      # ✅ Ensure build/libs exists
+      - name: Ensure build/libs exists
+        run: mkdir -p build/libs
 
+      # ✅ Ensure JAR file exists before Docker build
+      - name: Check JAR File Exists
+        run: test -f build/libs/*.jar || (echo "JAR file not found!" && exit 1)
+
+      # ✅ Log in to Docker Hub
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
+      # ✅ Build and Push Docker Image
       - name: Build and Push Docker Image
         run: |
           docker build -t learner183/github-action-projects:latest .
