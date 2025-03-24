@@ -1,5 +1,5 @@
+---
 name: Java CI with Gradle
-
 on:
   push:
     branches:
@@ -7,50 +7,44 @@ on:
   pull_request:
     branches:
       - master
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
-
+        os:
+          - ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-
       - name: Grant execute permission for gradlew (Linux/macOS)
         run: chmod +x gradlew
         if: runner.os != 'Windows'
-
       - name: Build with Gradle
         run: ./gradlew build
-
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: my-artifact
           path: |
             build/libs/*.jar
-
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: List Available Artifacts (Debugging)
-        run: ls -R ${{ github.workspace }}
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: my-artifact
-          path: build/libs
-
-      - name: Publish to GitHub Packages
-        run: |
-          echo "Publishing artifacts..."
-          # Add your publishing command here
+    publish:
+      needs: build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Download Build Artifacts
+          uses: actions/download-artifact@v4
+          with:
+            name: my-artifact
+            path: build/libs
+        - name: Extract Artifact
+          run: unzip build/libs/my-artifact.zip -d build/libs
+        - name: List Extracted Files (Debugging)
+          run: ls -R build/libs
+        - name: Publish to GitHub Packages
+          run: |
+            echo "Publishing artifacts..."
+            ls -R build/libs  
