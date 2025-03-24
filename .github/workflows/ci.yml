@@ -30,7 +30,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-    publish:
+  publish:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -44,4 +44,3 @@ jobs:
         run: |
           echo "Publishing artifacts..."
           # Add your publishing command here
-
