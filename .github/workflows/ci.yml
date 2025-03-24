@@ -35,7 +35,7 @@ jobs:
 
       # ✅ Ensure JAR file exists before Docker build
       - name: Check JAR File Exists
-        run: test -f build/libs/*.jar || (echo "JAR file not found!" && exit 1)
+        run: ls -lh build/libs/*.jar || (echo "JAR file not found!" && exit 1)
 
       # ✅ Log in to Docker Hub
       - name: Log in to Docker Hub
