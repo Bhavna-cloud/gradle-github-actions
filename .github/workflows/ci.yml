@@ -25,27 +25,10 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Build and Push Docker Image
+        uses: mr-smithers-excellent/docker-build-push@v4
         with:
-          name: my-artifact
-          path: build/libs/*.jar  
-
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: my-artifact
-          path: build/libs
-
-      - name: List Downloaded Files (Debugging)
-        run: ls -R build/libs
-
-      - name: Publish to GitHub Packages
-        run: |
-          echo "Publishing artifacts..."
-          ls -R build/libs  
-          echo "Successfully gets the artifacts"
+          image: learner183/github-action-projects
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
